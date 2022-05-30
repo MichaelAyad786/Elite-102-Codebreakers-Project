@@ -1,40 +1,43 @@
+# Shift 3 Letters up for Caesar. (Ex: E turns into B)
 text_file = open('testcode.txt').read()
 
-# Encoding and Decoding in vigenere cipher
-def vigenere_cipher(text, option, keyword):
-    alphabet = 'abcdefghijklmnopqrstuvwxyz'
-
+# Encoding and Decoding in Caesar Cipher
+def caesar_cipher(text, option):
     # Place to hold encoded text
     new_text = ''
-
-    # Place to hold updated keyword
-    final_key = ''
-
-    while len(final_key) != len(text):
-        for i in range(len(keyword)):
-            final_key += keyword[i]
-            if len(final_key) == len(text):
-                break
+    # Caesar Shift
+    shift = 3
 
     # Encode section
     if option == 'encode':
-        # Take alphabet position of corresponding letters in text and final_key to add and then create encoded text
-        for i in range(len(text)):
-            char_pos = alphabet.find(text[i]) + alphabet.find(final_key[i])
-            # alphabet*2 allows char_pos to go greater than the length of alphabet and essentially loops it back around;
-            # vigenere ciphers can't loop twice so *2 is all that is necessary
-            new_text += (alphabet*2)[char_pos]
+        # Translate for each alphabet letter while staying in alphabet
+        for char in text:
+            if char.isalpha():
+                new_char = ord(char) - shift
+                # Stay in alphabet by stopping unicode from going past a and loops back to z
+                while new_char < ord('a'):
+                    new_char += 26
+                # change new_char to alphabet from unicode with chr()
+                final_char = chr(new_char)
+                new_text += final_char
+            else:
+                return 'error'
 
     # Decode section
-    # Inverse Encode section
+    # Same as encode section but with minor adjustments to go backwards
     elif option == 'decode':
-        # Take alphabet position of corresponding letters in text and final_key to add and then create decoded text
-        for i in range(len(text)):
-            char_pos = alphabet.find(text[i]) - alphabet.find(final_key[i])
-            # if statement to loop back to the end of alphabet if <0
-            if char_pos < 0:
-                char_pos += 26
-            new_text += alphabet[char_pos]
+        # Translate for each alphabet letter while staying in alphabet
+        for char in text:
+            if char.isalpha():
+                new_char = ord(char) + shift
+                # Stay in alphabet by stopping unicode from going past z and loops back to a
+                while new_char > ord('z'):
+                    new_char -= 26
+                # change new_char to alphabet from unicode with chr()
+                final_char = chr(new_char)
+                new_text += final_char
+            else:
+                return 'error'
     else:
         return text
     return new_text
@@ -47,14 +50,7 @@ while True:
         break
     print('Please enter a valid input.')
 
-# Ask for key word
-while True:
-    keyword = input('Please enter a keyword (lowercase): ')
-    if keyword.islower():
-        break
-    print('Please enter a valid input.')
-
-new_text = vigenere_cipher(text_file, option, keyword)
+new_text = caesar_cipher(text_file, option)
 print(new_text)
 with open('testcode.txt', "w") as testcode:
     testcode.write(new_text)
