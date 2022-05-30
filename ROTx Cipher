@@ -1,0 +1,60 @@
+text_file = open('testcode.txt').read()
+
+# Encoding and Decoding in ROTx cipher
+def rotx_cipher(text, option):
+    # Place to hold encoded text
+    new_text = ''
+    # ROTx Shift
+    while True:
+        try:
+            shift = int(input('ROTx Cipher Shift Amount (positive = right shift) (negative = left shift): '))
+        except ValueError:
+            continue
+        break
+
+    # Encode section
+    if option == 'encode':
+        # Translate for each alphabet letter while staying in alphabet
+        for char in text:
+            if char.isalpha():
+                new_char = ord(char) + shift
+                # Stay in alphabet by stopping unicode from going past a and loops back to z
+                while new_char > ord('z'):
+                    new_char -= 26
+                # change new_char to alphabet from unicode with chr()
+                final_char = chr(new_char)
+                new_text += final_char
+            else:
+                return 'error'
+
+    # Decode section
+    # Same as encode section but with minor adjustments to go backwards
+    elif option == 'decode':
+        # Translate for each alphabet letter while staying in alphabet
+        for char in text:
+            if char.isalpha():
+                new_char = ord(char) - shift
+                # Stay in alphabet by stopping unicode from going past z and loops back to a
+                while new_char < ord('a'):
+                    new_char += 26
+                # change new_char to alphabet from unicode with chr()
+                final_char = chr(new_char)
+                new_text += final_char
+            else:
+                return 'error'
+    else:
+        return text
+    return new_text
+
+
+# Ask for encode or decode
+while True:
+    option = input('encode or decode? (lowercase): ')
+    if option == 'encode' or option == 'decode':
+        break
+    print('Please enter a valid input.')
+
+new_text = rotx_cipher(text_file, option)
+print(new_text)
+with open('testcode.txt', "w") as testcode:
+    testcode.write(new_text)
